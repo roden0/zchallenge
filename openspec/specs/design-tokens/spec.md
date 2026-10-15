@@ -1,10 +1,9 @@
 # design-tokens Specification
 
 ## Purpose
-
 Defines the CSS design tokens as CSS variables on `:root`, breakpoint strategy, and that [CONFIRM] values are not invented.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Tokens live in tokens.css
 All design tokens MUST live in `apps/web/src/styles/tokens.css` as CSS variables on `:root`.

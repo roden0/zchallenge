@@ -1,10 +1,9 @@
 # app-header Specification
 
 ## Purpose
-
 Defines the header: visibility on all views, landmarks, logo and cart link, item count, bag icon states, accessibility names, sizing, sticky behavior.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Header on every view
 The header MUST appear on every view, including the cart.

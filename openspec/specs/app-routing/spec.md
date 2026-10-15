@@ -1,10 +1,9 @@
 # app-routing Specification
 
 ## Purpose
-
 Defines the client-side routing behavior: routes, where views render, placeholders, not-found behavior, navigation focus/scroll, document titles, and h1 requirements.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Routes
 The app MUST provide routes for `/`, `/products/:id`, and `/cart`, and a not-found fallback for any other path.

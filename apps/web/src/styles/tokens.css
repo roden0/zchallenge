@@ -26,6 +26,10 @@
   --page-padding-mobile: 16px;
   --page-padding-tablet: 40px;
   --page-padding-desktop: 100px;
+
+  /* Borders */
+  --color-border-card: #000000;
+  --color-border-search-underline: #000000;
 }
 
 /* Breakpoints: 600px (tablet), 1024px (desktop), mobile-first. */
