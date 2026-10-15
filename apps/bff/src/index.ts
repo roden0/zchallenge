@@ -1,7 +1,14 @@
+import { fileURLToPath } from 'node:url';
+import { config as loadEnv } from 'dotenv';
 import { createApp } from './app.js';
 import { loadConfig } from './config.js';
 import { createConsoleLogger } from './middleware/logger.js';
 import { createUpstreamClient } from './services/upstream-client.js';
+
+loadEnv({
+  path: fileURLToPath(new URL('../../../.env', import.meta.url)),
+  quiet: true,
+});
 
 const config = loadConfig();
 

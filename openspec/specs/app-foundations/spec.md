@@ -1,10 +1,9 @@
 # app-foundations Specification
 
 ## Purpose
-
 Defines global CSS, focus styles, reduced motion, viewport, skip link, landmarks, strings module, VisuallyHidden component, and console-clean guarantees.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Global CSS foundation
 Minimal reset, `box-sizing: border-box`, font-family exactly `Helvetica, Arial, sans-serif`, `font-weight: 300`, white background, text color from token, small base font size from tokens. No font files bundled.
