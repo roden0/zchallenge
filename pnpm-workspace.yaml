@@ -1,0 +1,11 @@
+packages:
+  - "apps/*"
+
+# Approve the build scripts whose native/prebuilt binaries we rely on, and
+# acknowledge core-js (its postinstall only prints a funding notice).
+onlyBuiltDependencies:
+  - "@parcel/watcher"
+  - esbuild
+  - unrs-resolver
+ignoredBuiltDependencies:
+  - core-js

@@ -67,7 +67,7 @@ apps/bff/src/
 
 - Group by feature, not by file type. A feature may import from `shared/`, **never from another feature**. If two features need it, move it to `shared/`.
 - `web` only calls the BFF, never the upstream API.
-- The BFF owns the `x-api-key` header, read from an environment variable. The key must not appear in client code, logs, commits, specs or this file. Provide `.env.example` with placeholders only.
+- The BFF owns the `x-api-key` header, read from an environment variable. The key must not appear in client code, logs, commits, specs or this file.
 - Normalize upstream data in the BFF (or one mapping function in `web/shared`), not scattered across components.
 - API contract notes live in `docs/api-notes.md`. Read it before touching data code. If a behavior is not documented there, verify it against the real API and document it. **Do not guess response shapes.**
 
@@ -109,6 +109,7 @@ apps/bff/src/
 ## Git
 
 - Branches: `feat/<change-id>`, `fix/<short-name>`, `chore/<short-name>`.
+- Create one branch per OpenSpec change (`feat/<change-id>` for features, `chore/<change-id>` for tooling) and make the finishing commit — a brief description of the changes — before archiving it. Merge the branch once reviewed.
 - Conventional Commits (`feat(cart): ...`, `test(bff): ...`). Small, atomic commits that each leave the repo green.
 - Every PR has a description: what and why, link to the OpenSpec change, how it was verified, and what AI agents did versus what was reviewed by hand.
 - Do not rewrite shared history or push to `main` directly.

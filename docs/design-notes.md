@@ -8,10 +8,13 @@ Visual and interaction reference derived from the Figma file (screens plus Dev M
 
 - Font in Figma: **Helvetica Neue, weight 300 (Light)**, line height 100%, letter spacing 0% (except the add button). The challenge mandates `font-family: Helvetica, Arial, sans-serif`, so use exactly that stack with `font-weight: 300`. Do not bundle a font. Rendering will vary by OS: Helvetica Light exists on macOS, but Arial (Windows) and the usual Linux substitutes have no Light weight and will show Regular. Mention it in the README as a known trade-off.
 - Palette: monochrome, plus a red for "Eliminar". No shadows or radii visible.
-- Horizontal page padding: **100px** on desktop (Dev Mode: frame 1920, content 1720). Header, search, grid and cart share it. Tablet and mobile values **[CONFIRM]**.
-- **Header** (Dev Mode: 1920 × 80): logo on the left (link to `/`), bag icon + count on the right (link to `/cart`). It is a single `Header` component in Figma and is **identical on every view, cart included** (human decision). The bag icon is outline at 0 items and filled at 1 or more.
+- Frames: desktop **1920**, tablet **834**, mobile **393**. Horizontal page padding: **100px** on desktop (exact, content 1720), **≈40px** on tablet and **≈16px** on mobile (approximate: measured from screenshots now that the frame widths are known). Header, search, grid and cart share it.
+- **Header** (Dev Mode: 1920 × 80): logo on the left (link to `/`), bag icon + count on the right (link to `/cart`). It is a single `Header` component in Figma and is **identical on every view, cart included** (human decision). The bag icon is outline at 0 items (`bag_inactive.svg`) and filled at 1 or more (`bag_active.svg`).
+- Icons are imported as asset URLs and rendered with `<img alt="">` inside the link or button that carries the accessible name (for example `aria-label="Cart, 2 items"`). Do not add an SVG plugin without asking.
+- The back chevron and the clear `×` are text characters. Mark the glyph `aria-hidden="true"` and give the control its accessible name: the clear control is a `<button type="button" aria-label="Clear search">` that also returns focus to the input, and the back link's name is the text `BACK`.
 - Header and `< BACK` are marked FIXED in the detail frame's layers, everything else SCROLLS. Treat the header as sticky. **[CONFIRM in the prototype]**
-- Price format: `1099 EUR` (no thousands separator, no decimals, `EUR` suffix). One shared formatter.
+- Price format: `1099 EUR` (no thousands separator, `EUR` suffix). Real data has decimals (`959.42`), so show decimals only when present, with a comma separator (`959,42 EUR`) **[proposed, see api-notes.md]**. One shared formatter. Compute cart totals in integer cents.
+- Storage capacity text comes as `128 GB` or `128GB`. Display it normalized with a space (`128 GB`), but keep the raw value for identity.
 - UI copy is hard-coded and mixes English and Spanish in Figma. Keep all strings in one module (`shared/strings.ts`), no i18n library. Copy as in Figma:
 
 | Where | String |
@@ -69,7 +72,7 @@ Not yet captured **[CONFIRM]**: results counter, specs table (label and value), 
 - Detail: info column **380px** wide, add button **380 × 56px** (padding 5/7/5/7). The specs table and the page content sit in a centered container of **≈1200px** (≈360px side margins). The image sits on the left of that container.
 - Color swatch: **24 × 24px**, 1px `#CCCCCC` border. Gap between swatches **[CONFIRM]**: the component says 10px, the visible spacing looks larger (≈16px).
 - Cart: buttons are **≈260 × 56px**, `CONTINUE SHOPPING` at the left padding edge, `PAY` at the right padding edge.
-- Breakpoints: Figma buttons carry a `Breakpoint` property (`XS-M` seen). Tablet and mobile frame widths **[CONFIRM]**.
+- Breakpoints (proposed, mobile-first, the design only shows three widths): mobile base up to 599px (1 column, padding ≈16px), tablet from 600px (2 columns, padding ≈40px), desktop from 1024px (5 columns, padding 100px). Between designed widths the layout stays fluid. At 1024px desktop cards are about 165px wide, so the card info row must wrap (name above price) instead of overflowing. **[CONFIRM]**
 
 ## Catalog list
 
@@ -85,7 +88,7 @@ On hover the card background goes **white to black**. A black rectangular layer 
 
 Implementation guidance:
 
-- A `::before` pseudo-element, absolutely positioned, `transform: translateY(100%)` to `translateY(0)`, with a transition (duration and easing **[CONFIRM in the prototype]**, start with 300 ms ease-out). Content sits above it. Text color transitions in sync.
+- A `::before` pseudo-element, absolutely positioned, `transform: translateY(100%)` to `translateY(0)`. **Decided: `ease-in-out`, 1 second in total.** The black fill rising and the text going from black to white use the same duration and easing, so they finish together. Define them as `--duration-hover: 1000ms` and `--easing-hover: ease-in-out`. On mouse leave the layer slides back down with the same timing. Content sits above the layer.
 - Trigger on `:hover` **and** `:focus-visible`.
 - Wrap the hover effect in `@media (hover: hover)` to avoid sticky hover on touch devices.
 - Under `prefers-reduced-motion: reduce`, drop the slide and switch colors instantly.
@@ -137,7 +140,7 @@ Text is very small (10 to 12px). Do not go below the Figma sizes, and do not set
 | Header on the cart page | Same header as every view, icon included (human decision) |
 | Quantity control in the cart | None. See "Proposed" |
 
-Still verify what `storageOptions[].price` means in real data (absolute versus increment over `basePrice`). The UI must display the absolute price either way.
+Verified against the real API: `storageOptions[].price` is the absolute price of that option. `basePrice` equals one of those prices but is not always the cheapest (5 of 23 products), see `docs/api-notes.md`.
 
 ## Proposed (needs human confirmation)
 
@@ -158,7 +161,7 @@ Request error with retry, no-results state, product not found (404), and a faile
 
 ## Still to extract from Figma
 
-- Frame widths for tablet and mobile (breakpoints) and their paddings and card sizes.
+- Confirm the tablet and mobile paddings (≈ values above), their card sizes, and the proposed breakpoints.
 - Dev Mode values for: results counter, specs table text, section titles, cart title and footer text, card and table border color, enabled primary button color, selected storage border, selected swatch outline.
-- The `Loading bar` appearance and the hover animation duration and easing.
-- SVG exports: logo, bag icon outline, bag icon filled, back chevron, clear (×) icon. The `Search` component also contains an icon layer. Put them in `apps/web/src/shared/assets/icons/`.
+- The `Loading bar` appearance.
+- SVG exports Done: `logo.svg`. Done: `bag_inactive.svg` and `bag_active.svg` in `apps/web/src/shared/assets/icons/`. The back chevron and the clear (×) are text glyphs in the Figma, not icons. Read the exact character in each text layer's Content field (for example `‹` or `<`, `×` or `x`). The `Search` component also contains an icon layer, check what it is. Export is in the Properties panel (Export section), Dev Mode is not needed.

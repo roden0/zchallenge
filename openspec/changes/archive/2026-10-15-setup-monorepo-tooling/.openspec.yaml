@@ -1,0 +1,6 @@
+schema: spec-driven
+created: 2026-10-15
+skip_specs: true
+goal: "Runnable pnpm+Turborepo monorepo (web: React19+Rspack, bff:
+  Express+Node18) with Biome, strict TS, Jest+RTL and Mocha+Chai, dev-unminified
+  vs prod-minified, env example and CI."
