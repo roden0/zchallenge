@@ -1,0 +1,32 @@
+:root {
+  /* Colors (exact from design-notes) */
+  --color-text: #000000;
+  --color-text-secondary: #79736d;
+  --color-text-placeholder: #aaaaaa;
+  --color-border-control: #cccccc;
+  --color-content-disabled: #c2bfbc;
+  --color-bg-disabled: #f3f2f2;
+  --color-danger: #df0000;
+
+  /* Typography scale */
+  --font-size-10: 10px;
+  --font-size-12: 12px;
+  --font-size-14: 14px;
+  --font-size-16: 16px;
+  --font-size-20: 20px;
+  --font-size-24: 24px;
+  --font-weight-light: 300;
+
+  /* Layout and motion */
+  --header-height: 80px;
+  --duration-hover: 1000ms;
+  --easing-hover: ease-in-out;
+
+  /* Page padding (mobile/tablet/desktop) */
+  --page-padding-mobile: 16px;
+  --page-padding-tablet: 40px;
+  --page-padding-desktop: 100px;
+}
+
+/* Breakpoints: 600px (tablet), 1024px (desktop), mobile-first. */
+/* Use literal values in @media (CSS variables not allowed in @media). */

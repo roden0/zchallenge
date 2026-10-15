@@ -15,5 +15,10 @@ module.exports = {
       },
     ],
   },
+  moduleNameMapper: {
+    '^.+.module.css$': '<rootDir>/src/test/style-mock.cjs',
+    '^.+.css$': '<rootDir>/src/test/style-mock.cjs',
+    '^.+.svg$': '<rootDir>/src/test/file-mock.cjs',
+  },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
 };
