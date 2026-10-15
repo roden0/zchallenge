@@ -2,7 +2,7 @@
 
 Contract of the upstream phones API, as documented in the challenge's Swagger. Read this before touching any data code.
 
-> **Status legend:** items marked **[VERIFY]** come from the Swagger only and have not been confirmed against real responses. Confirm them with real calls during the `add-bff-products-api` change and update this file. Do not guess.
+> **Status legend:** items previously marked **[VERIFY]** came from the Swagger only. They were confirmed against real responses on 2026-10-15 during `add-bff-products-api`; anything still unconfirmed is marked **unresolved**.
 
 ## Base
 
@@ -10,7 +10,7 @@ Contract of the upstream phones API, as documented in the challenge's Swagger. R
 - Auth: header `x-api-key` on **every** request. Without it the API answers `401 {"error":"UNAUTHORIZED","message":"Invalid API key"}`.
 - The key is provided in the challenge statement. It lives only in the BFF environment (`UPSTREAM_API_KEY`), never in client code, logs, specs or git. Base URL goes in `UPSTREAM_API_URL`.
 - CORS is open (`access-control-allow-origin: *`), so the browser *could* call the API directly. The BFF exists to keep the key out of the client and to give the web app a stable, normalized contract. State this trade-off in the README.
-- Hosted on Render. One measurement of `GET /products?limit=20` took about 85 ms, probably warm. **[VERIFY]** Cold start (first request after idle time) has not been observed. The BFF needs a configurable timeout and the web app a proper loading state.
+- Hosted on Render. One measurement of `GET /products?limit=20` took about 85 ms, probably warm. **Cold start is unresolved:** the first request after an idle period has not been timed, so the BFF keeps a configurable timeout (`UPSTREAM_TIMEOUT_MS`, default 15000 ms) and the web app needs a proper loading state.
 - Responses carry an `ETag`, so BFF-side caching is possible. Only add it if a change calls for it.
 
 ## Endpoints
@@ -19,7 +19,7 @@ Contract of the upstream phones API, as documented in the challenge's Swagger. R
 
 | Query param | Type | Notes |
 |---|---|---|
-| `search` | string | Filters by brand or name. Verified: case-insensitive and partial (`samsung`, `Samsung`, `sam` and `galaxy` all return the same 6 products). Matching on both brand and name is inferred from that, not tested in isolation |
+| `search` | string | Filters by brand or name. Verified: case-insensitive and partial (`samsung`, `Samsung`, `sam` and `galaxy` all return the same 6 products). Verified in isolation: a brand-only term (`apple`) and a name-only term (`iphone`) each return the same 2 products, so matching spans both fields. A term with no matches (`zzzz`) returns `200` with `[]` |
 | `limit` | integer | Max items. Verified: omitting it returns all 24 products, so there is no small default |
 | `offset` | integer | Pagination offset. Not needed by the challenge |
 
@@ -86,7 +86,7 @@ export interface ApiError {
 }
 ```
 
-Which fields can actually be missing or empty is unknown **[VERIFY]**. Until checked, the web app must not crash on an empty `colorOptions`, `storageOptions` or `similarProducts`, or on a missing spec.
+Checked 2026-10-15 across the 23 unique details: none had empty `colorOptions` or `storageOptions`, and every documented field was present, so a missing or empty field was not observed. The BFF still rejects a structurally wrong payload with `502`, and the web app must not crash on empty `colorOptions`, `storageOptions` or `similarProducts`, or on a missing spec.
 
 ## Verified against the real API (2026-10-15)
 
@@ -98,18 +98,24 @@ Checked with the list endpoint and 23 detail requests (one per unique id). No re
 - `capacity` strings are inconsistent: `"128 GB"` and `"128GB"` both appear, and there is `"1 TB"`.
 - Many products have a single choice. 11 of 23 have one storage option, and 5 have one storage option **and** one color (`OPP-A18`, `RLM-NOTE50`, `SNY-XPERIA1V`, `XIA-R12`, `XMI-13TPro`). Colors range from 1 to 6 and storage from 1 to 3. None of the 23 had empty `colorOptions` or `storageOptions`.
 - Some prices have decimals (`959.42`, `117.29`, `553.31`).
-- `similarProducts` has exactly 6 entries for every product.
+- `similarProducts` has exactly 6 entries for every product. It never contains the requested product itself. Two products contain a repeat: `APL-IP13-128` and `OPP-R12FS` each list `XMI-RN13P5G` twice, so the BFF must dedupe `similarProducts` by id.
 - Ids are mixed case with hyphens (`APL-I15PM`, `XMI-13TPro`).
-- Image URLs use `http://`, not `https://`, on the same host as the API.
+- Image URLs use `http://`, not `https://`, on the same host as the API (`prueba-tecnica-api-tienda-moviles.onrender.com`). Every image URL (list `imageUrl`, `colorOptions[].imageUrl`, `similarProducts[].imageUrl`) also answers `200` over `https://` on that host, and images need no API key (a keyless image request returns `200`), so rewriting `http` to `https` is safe.
 - Names have inconsistent casing (`edge 50 Pro`, `g24`, `14`). The design uppercases names in cards and titles, so only the specs table shows them as they are.
 - Figma mock prices (for example Galaxy S24 Ultra 1099) do not match the real data (1329). The Figma is not a price reference.
 
-## Still to check (first tasks of the BFF change)
+## BFF verification (2026-10-15)
 
-1. Whether every image URL (list, colors, similar) answers 200 over `https://`, and whether images need the API key.
-2. Whether `similarProducts` contains the product itself or repeated ids.
-3. `search` on one field only: a brand-only and a name-only term (for example `apple` and `iphone`), and `limit` + `search` together.
-4. Cold start after an idle period.
+Resolved in `add-bff-products-api`:
+
+- Every image URL (list, colors, similar) answers `200` over `https://` on the API host, and images need no API key, so the BFF rewrites upstream-host `http` image URLs to `https`.
+- `similarProducts` never contains the product itself, but `APL-IP13-128` and `OPP-R12FS` repeat `XMI-RN13P5G`, so the BFF dedupes `similarProducts` by id and removes the requested product.
+- `search` matches brand and name: the brand-only term `apple` and the name-only term `iphone` each return the same 2 products (`APL-I15PM`, `APL-IP13-128`). `search=zzzz` returns `200` with `[]`.
+- `limit` combined with `search` works: `search=sam&limit=3` returns 3 of the 6 `sam` products.
+
+Still unresolved:
+
+- Cold start after an idle period has not been timed; the BFF relies on `UPSTREAM_TIMEOUT_MS` (default 15000 ms) and the web app on a loading state.
 
 ## Decisions pending (need to be settled in the specs)
 
@@ -125,29 +131,32 @@ Resolved (details in `docs/design-notes.md`):
 - The cart has no quantity control. Cart line behavior is proposed in `docs/design-notes.md` and still needs confirmation.
 - The duplicated id is an identical record, so deduplicating in the BFF is safe.
 
-## BFF contract (proposed)
+## BFF contract (implemented)
 
-The web app talks only to these routes. The BFF forwards to the upstream API adding `x-api-key`.
+`apps/bff` exposes these routes; the web app talks only to them and the dev server proxies `/api` to the BFF. Every error body is the `ApiError` shape `{ error, message }` with an uppercase code.
 
-| BFF route | Upstream | Notes |
+| BFF route | Upstream | Behavior |
 |---|---|---|
-| `GET /api/products?search=&limit=&offset=` | `GET /products` | Validate and clamp params. Forward only known ones |
-| `GET /api/products/:id` | `GET /products/{id}` | Reject empty or malformed ids |
+| `GET /api/products?search=&limit=&offset=` | `GET /products?search=` | Trims `search` (400 if longer than 100 chars), validates `limit` (integer ≥1, 400 otherwise, clamped to 100) and `offset` (integer ≥0, 400 otherwise, default 0). A known parameter that repeats is 400; unknown parameters are ignored. Forwards only `search`. |
+| `GET /api/products/:id` | `GET /products/{id}` | Rejects an id that does not match `^[A-Za-z0-9_-]{1,64}$` with 400; URL-encodes it upstream. |
 
-Error mapping (the client never sees upstream auth failures as its own):
+List responses are a plain JSON array: the upstream payload is validated, deduplicated by `id` keeping the first occurrence, then `offset` and `limit` are applied (dedupe before pagination). Detail responses pass numbers, including decimals, through untouched.
+
+Error mapping (the client never sees an upstream auth failure as its own):
 
 | Situation | BFF responds |
 |---|---|
-| Upstream `404` | `404` with `ApiError` |
-| Upstream `401` (our key is wrong) | `502`, logged server-side without the key |
-| Upstream timeout or network failure | `504` / `502` with `ApiError` |
-| Invalid params from the client | `400` with `ApiError` |
+| Invalid client input (params, id) | `400 BAD_REQUEST` |
+| Unknown route, or upstream `404` | `404 NOT_FOUND` |
+| Upstream `401`, any other upstream non-2xx, network failure, or malformed payload | `502 BAD_GATEWAY` |
+| Upstream timeout | `504 GATEWAY_TIMEOUT` |
+| Unexpected exception | `500 INTERNAL_ERROR` (generic message, no stack) |
 
-All BFF error bodies use the `ApiError` shape so the web client handles a single format.
+The `x-api-key` header is added on every upstream request and never appears in a response body, log line or error message.
 
-### Normalization in the BFF (proposed)
+### Normalization in the BFF (implemented)
 
 - Deduplicate products by `id`, keeping the first occurrence, **before** applying `offset` and `limit`. Only `search` is forwarded upstream.
-- Rewrite image URLs from `http://` to `https://` when they point at the upstream host, after confirming that `https://` serves them. Mixed content can produce warnings or blocked images once the app is served over HTTPS.
+- Rewrite image URLs from `http://` to `https://` when they point at the upstream host (verified to serve over `https` above). Mixed content can produce warnings or blocked images once the app is served over HTTPS.
 - Validate `:id` against `^[A-Za-z0-9_-]{1,64}$`.
 - Leave `capacity` strings and names untouched. Display formatting (`128GB` to `128 GB`) belongs to the web app, and identity must use the raw value.

@@ -1,0 +1,9 @@
+{
+  "name": "contracts",
+  "version": "1.0.0",
+  "private": true,
+  "types": "./src/index.d.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}
