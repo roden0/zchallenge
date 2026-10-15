@@ -1,0 +1,16 @@
+export const strings = {
+  appName: 'MBST',
+  homeLinkAria: 'MBST, home',
+  cartLinkAriaZero: 'Cart, 0 items',
+  cartLinkAriaOne: 'Cart, 1 item',
+  cartLinkAriaPlural: (n: number) => `Cart, ${n} items`,
+  cartTitle: (n: number) => `CART (${n})`,
+  catalogTitle: 'Smartphones',
+  catalogHeadingVisuallyHidden: 'Smartphones',
+  detailTitleGeneric: 'Product',
+  cartViewTitle: 'Cart',
+  notFoundTitle: 'Page not found',
+  notFoundMessage: 'Page not found',
+  backToHome: 'Go to home',
+  skipToContent: 'Skip to content',
+} as const;

@@ -12,7 +12,8 @@
   "dependencies": {
     "contracts": "workspace:*",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "react-router-dom": "6.30.6"
   },
   "devDependencies": {
     "@rsbuild/core": "1.7.6",

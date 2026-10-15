@@ -1,7 +1,5 @@
+import { AppRouter } from './router';
+
 export function App() {
-  return (
-    <main>
-      <h1>Zara Challenge</h1>
-    </main>
-  );
+  return <AppRouter />;
 }

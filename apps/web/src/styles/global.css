@@ -1,0 +1,66 @@
+/* biome-ignore-all lint/complexity/noImportantStyles: reduced-motion kill switch must override component transitions */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: var(--font-size-16);
+  line-height: 1;
+  scroll-padding-top: var(--header-height);
+}
+
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: var(--font-weight-light, 300);
+  background-color: #ffffff;
+  color: var(--color-text);
+  font-size: var(--font-size-12);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+
+/* Header links: no underline by default */
+header a,
+header button {
+  text-decoration: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
