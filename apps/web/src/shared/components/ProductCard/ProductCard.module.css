@@ -13,9 +13,11 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: #000000;
+  background: #ffffff;
   transform: translateY(100%);
-  transition: transform var(--duration-hover) var(--easing-hover);
+  transition:
+    transform var(--duration-hover) var(--easing-hover),
+    background-color var(--duration-hover) var(--easing-hover);
   z-index: 0;
 }
 
@@ -79,6 +81,7 @@
 
 .card:focus-visible::before {
   transform: translateY(0);
+  background: #000000;
 }
 
 .card:focus-visible .brand,
@@ -90,6 +93,7 @@
 @media (hover: hover) {
   .card:hover::before {
     transform: translateY(0);
+    background: #000000;
   }
 
   .card:hover .brand,

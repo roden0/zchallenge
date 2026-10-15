@@ -88,11 +88,11 @@ Not yet captured **[CONFIRM]**: results counter, specs table (label and value), 
 
 ## Card hover
 
-On hover the card background goes **white to black**. A black rectangular layer slides in **from bottom to top** and fills the card. Text (brand, name, price) turns white. The image stays as is. The card component has a `Fill` layer, which is that layer.
+On hover the card background goes **white to black**. A layer slides in **from bottom to top** and fills the card, its own background animating **white to black** as it rises. Text (brand, name, price) turns white. The image stays as is. The card component has a `Fill` layer, which is that layer.
 
 Implementation guidance:
 
-- A `::before` pseudo-element, absolutely positioned, `transform: translateY(100%)` to `translateY(0)`. **Decided: `ease-in-out`, 1 second in total.** The black fill rising and the text going from black to white use the same duration and easing, so they finish together. Define them as `--duration-hover: 1000ms` and `--easing-hover: ease-in-out`. On mouse leave the layer slides back down with the same timing. Content sits above the layer.
+- A `::before` pseudo-element, absolutely positioned, `transform: translateY(100%)` to `translateY(0)` with `background` `#FFFFFF` to `#000000`, both transitioning. **Decided: `ease-in-out`, 1 second in total.** The fill rising/darkening and the text going from black to white use the same duration and easing, so they finish together. Define them as `--duration-hover: 1000ms` and `--easing-hover: ease-in-out`. On mouse leave the layer slides back down with the same timing. Content sits above the layer.
 - Trigger on `:hover` **and** `:focus-visible`.
 - Wrap the hover effect in `@media (hover: hover)` to avoid sticky hover on touch devices.
 - Under `prefers-reduced-motion: reduce`, drop the slide and switch colors instantly.
