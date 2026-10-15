@@ -1,0 +1,26 @@
+schema: spec-driven
+
+# Keep this short: everything here is injected into the agent's context.
+# Detailed conventions live in the root AGENTS.md.
+context: |
+  Phone catalog web app (technical challenge). pnpm monorepo:
+  apps/web (React 19 + TypeScript + Rsbuild SPA) and apps/bff (Express on Node 18).
+  The web app only talks to the BFF; the BFF adds the x-api-key header to the upstream API.
+  State: Context API + useReducer. Cart persists in localStorage.
+  Graded: responsive, accessible, clean browser console, tests, Biome, README,
+  dev (unminified) vs production (concatenated + minified) modes.
+  Read AGENTS.md for code conventions, docs/api-notes.md for the API contract
+  and docs/design-notes.md for the Figma-derived UI reference.
+
+rules:
+  proposal:
+    - State the user-visible goal and what is explicitly out of scope.
+    - Keep the change small enough to review in a single PR.
+  specs:
+    - Write behavior only, using requirements with WHEN/THEN scenarios. No implementation details.
+    - Include scenarios for loading, empty and error states, and for keyboard and screen reader use.
+  design:
+    - Only create when there is a real technical decision. Record alternatives and why they were rejected.
+  tasks:
+    - Order tasks so the app stays runnable after each one. Put tests next to the code they cover.
+    - Last task is always: run lint, typecheck and tests, and check the browser console is clean.
