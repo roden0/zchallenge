@@ -51,7 +51,7 @@ The left side of the header contains the logo as a link to `/`. The link's acces
 - **THEN** the logo image has `alt=""`
 
 ### Requirement: Cart link and count
-The right side shows a link to `/cart` with the bag icon and item count. The count comes from an `itemCount` prop (number), defaulted to `0` for now.
+The right side shows a link to `/cart` with the bag icon and item count. The count MUST come from the cart state: the layout MUST read it with the cart hook and pass it to the header, so it always shows the current number of cart lines and updates immediately when lines change, including changes made in another tab.
 
 #### Scenario: Cart link points to cart
 - **WHEN** on any route
@@ -72,6 +72,17 @@ The right side shows a link to `/cart` with the bag icon and item count. The cou
 #### Scenario: Bag icon decorative
 - **WHEN** on any route
 - **THEN** the bag icon has `alt=""`
+
+#### Scenario: Count follows cart changes
+- **GIVEN** the cart has 0 lines
+- **WHEN** a line is added in this tab
+- **THEN** the visible count changes to `1` without reloading
+- **AND** the active bag icon is shown
+
+#### Scenario: Count follows another tab
+- **GIVEN** two open tabs sharing the cart
+- **WHEN** the cart changes in the other tab
+- **THEN** this tab's count and bag icon update to match
 
 ### Requirement: Bag icon states
 `itemCount === 0` shows `bag_inactive.svg`. `itemCount >= 1` shows `bag_active.svg`. The count is always visible, including `0`.
