@@ -6,7 +6,7 @@ describe('Routing', () => {
   it.each([
     ['/', 'Smartphones'],
     ['/products/XMI-RN13P5G', 'Product'],
-    ['/cart', 'Cart'],
+    ['/cart', 'CART (0)'],
   ])('renders %s inside main with exactly one h1', (path, h1Text) => {
     render(
       <MemoryRouter initialEntries={[path]}>

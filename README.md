@@ -87,6 +87,17 @@ and tablet and fluid on mobile, and the row height is ≈`46px`.
 
 ## Cart
 
+The `/cart` view (feature `apps/web/src/features/cart`) renders the current cart:
+a `CART ({n})` heading, one line per item with its image, name, `{capacity} | {color}`
+and price, a red `Eliminar` button per line, and a footer linking `CONTINUE SHOPPING`
+to the catalog with the `TOTAL` and a `PAY` button. Removing a line announces the
+change and moves focus to the next line, the previous one, or the heading when the
+cart empties. An empty cart shows only the heading with `(0)` and `CONTINUE SHOPPING`.
+
+**Out of scope:** `PAY` is a non-functional placeholder (it reveals a
+`CHECKOUT IS NOT AVAILABLE IN THIS DEMO.` status and does not navigate). There is no
+checkout flow.
+
 Cart state lives in the web app (`apps/web/src/shared/cart`), is persisted in
 `localStorage` under the key `mbst:cart:v1`, and syncs across tabs. Known
 limitations:

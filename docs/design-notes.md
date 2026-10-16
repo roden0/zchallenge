@@ -63,7 +63,7 @@ Confirmed (add-product-detail): enabled primary button (`PAY`, enabled add) `#00
 | Add button label | 12px | uppercase | line height 16px, **letter spacing 8%**, centered |
 | `Eliminar` | 12px | as typed | `--color-danger` |
 
-Confirmed (add-product-detail): section titles 20px uppercase; specifications labels 12px uppercase and values 12px; storage/color legends 14px uppercase; selected color name 12px capitalized; back link 12px uppercase. The results counter is captured in the catalog section below. Still **[CONFIRM]**: cart title and footer text.
+Confirmed (add-product-detail): section titles 20px uppercase; specifications labels 12px uppercase and values 12px; storage/color legends 14px uppercase; selected color name 12px capitalized; back link 12px uppercase. The results counter is captured in the catalog section below. Cart title and footer text are confirmed in the Cart section.
 
 **Sizes and layout**
 
@@ -71,7 +71,7 @@ Confirmed (add-product-detail): section titles 20px uppercase; specifications la
 - Catalog grid: 5 columns over 1720px, so **cards are 344px wide and roughly square (≈)**. Search input is full grid width.
 - Detail (confirmed in add-product-detail): the content sits in a centered container of **1200px**, with the image area **510px** on the left and the info column **380px** on the right, leaving **310px** between them (`justify-content: space-between`). Tablet keeps the info column at **380px**; mobile stacks both full width. Add button **380 × 56px** (fills the info column). Specifications label column **300px** on desktop and tablet, fluid on mobile, rows **≈46px** (mobile width and exact row height still **[CONFIRM]**).
 - Color swatch: **24 × 24px**, 1px `#CCCCCC` border. Gap between swatches **[CONFIRM]**: the component says 10px, the visible spacing looks larger (≈16px).
-- Cart: buttons are **≈260 × 56px**, `CONTINUE SHOPPING` at the left padding edge, `PAY` at the right padding edge.
+- Cart: buttons are **260 × 56px** desktop, **200 × 48px** tablet, **175 × 48px** mobile (confirmed, `add-cart-view`; Dev Mode), `CONTINUE SHOPPING` at the left padding edge, `PAY` at the right padding edge.
 - Breakpoints (proposed, mobile-first, the design only shows three widths): mobile base up to 599px (1 column, padding ≈16px), tablet from 600px (2 columns, padding ≈40px), desktop from 1024px (5 columns, padding 100px). Between designed widths the layout stays fluid. At 1024px desktop cards are about 165px wide, so the card info row must wrap (name above price) instead of overflowing. **[CONFIRM]**
 
 ## Catalog list
@@ -120,10 +120,17 @@ The same card (and hover) is reused in "Similar items".
 ## Cart
 
 - Title `CART ({n})`.
-- Each line (Figma component `Cart item`): product image on the left, then name (uppercase), `{storage} | {color name}` (uppercase), price, and `Eliminar` aligned to the bottom of the image.
+- Each line (Figma component `Cart item`): product image on the left, then name (uppercase), `{storage} | {color name}` (uppercase), price, and `Eliminar` at the bottom of the details column, to the right of the image.
 - Footer: outlined `CONTINUE SHOPPING` on the left, `TOTAL {price} EUR` and the dark `PAY` button on the right (desktop and tablet). On mobile the total is on its own row and both buttons sit side by side below it.
 - Empty cart: only the title with `(0)` and `CONTINUE SHOPPING` (full width on mobile). No total, no `PAY`.
-- Header: same as every other view. The desktop cart frame also draws a thin full-width line under the header, which the list and detail frames do not. Replicate it only on the cart, or drop it for consistency **[CONFIRM]**.
+- **Confirmed (Dev Mode, `add-cart-view`):**
+  - Title `CART ({n})`: **20px** on mobile and tablet, **24px** on desktop, uppercase, weight 300, `#000000`, line height 100%.
+  - Line text (name, capacity `|` color, price): **12px**, uppercase, weight 300, `#000000`.
+  - Total `TOTAL {price} EUR`: label and price on one line (wrapping to two), **14px**, weight **400**, uppercase, `#000000`. On mobile the TOTAL row sits above the two buttons.
+  - `CONTINUE SHOPPING`: outlined button, **`1px #1B1A18`** border (`--color-border-outline`), **white** background, black label, **no hover/focus styling**. `PAY`: filled `--color-bg-primary` (`#000000`) with a white label. Both share their label: 12px uppercase weight 300.
+  - Button sizes: desktop **260 × 56**, tablet **200 × 48**, mobile **175 × 48**. `CONTINUE SHOPPING` at the left padding edge, `PAY` at the right padding edge.
+  - The thin full-width line under the header on the desktop cart frame is a **`Loading line`**, not a divider. It is **out of scope**; no line is rendered.
+- **Approximate cart spacing [CONFIRM]** (measured from the Figma screenshot; no Dev Mode values yet): content top offset **≈70px** desktop; title → list **≈100px** desktop; line column gap **≈65px** desktop; image area **150px** mobile / **190px** desktop; name → options **≈18px**; options → price **≈34px**; `Eliminar` at the bottom of the details column (aligned with the image bottom); footer `padding-top ≈40px` / `padding-bottom ≈55px`; mobile gap between the two buttons **≈11px**.
 
 ## Accessibility checks against the Figma values
 
@@ -172,6 +179,6 @@ Request error with retry, no-results state, product not found (404), and a faile
 ## Still to extract from Figma
 
 - Confirm the tablet and mobile paddings (≈ values above), their card sizes, and the proposed breakpoints.
-- Dev Mode values for: cart title and footer text, card and table border color.
+- Dev Mode values for: card and table border color.
 - The `Loading bar` appearance.
 - The back chevron and the clear (×) are text glyphs in the Figma, not icons. Read the exact character in each text layer's Content field (for example `‹` or `<`, `×` or `x`). The `Search` component also contains an icon layer, check what it is. Export is in the Properties panel (Export section), Dev Mode is not needed.

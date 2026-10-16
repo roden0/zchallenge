@@ -8,6 +8,7 @@
   --color-bg-disabled: #f3f2f2;
   --color-bg-primary: #000000;
   --color-border-selected: #000000;
+  --color-border-outline: #1b1a18;
   --color-danger: #df0000;
 
   /* Typography scale */
@@ -18,6 +19,7 @@
   --font-size-20: 20px;
   --font-size-24: 24px;
   --font-weight-light: 300;
+  --font-weight-regular: 400;
 
   /* Layout and motion */
   --header-height: 80px;
