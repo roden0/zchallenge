@@ -142,13 +142,13 @@ Text is very small (10 to 12px). Do not go below the Figma sizes, and do not set
 | Price before choosing storage | `From {basePrice} EUR` |
 | Price after choosing storage | The full price of that storage option, no "From". The Figma shows 1099 EUR for 256 GB and 1199 EUR for 512 GB, so the UI always shows an absolute total |
 | Header on the cart page | Same header as every view, icon included (human decision) |
-| Quantity control in the cart | None. See "Proposed" |
+| Quantity control in the cart | None. See "Cart without quantities" below |
+| Cart without quantities | Confirmed (`add-cart-state`): every add creates its own line with a generated unique `lineId`, `Eliminar` removes exactly that line, and the header count is the number of lines. The cart persists in `localStorage` under `mbst:cart:v1`; totals are computed in integer cents (`Math.round(price * 100)` per line) |
 
 Verified against the real API: `storageOptions[].price` is the absolute price of that option. `basePrice` equals one of those prices but is not always the cheapest (5 of 23 products), see `docs/api-notes.md`.
 
 ## Proposed (needs human confirmation)
 
-- **Cart without quantities:** every add creates its own line with a generated unique `lineId`, and `Eliminar` removes exactly that line. The header count is the number of lines.
 - **`PAY`:** render it as in the Figma as a non-functional placeholder (`type="button"`, documented in the README as out of scope). Alternative: omit it.
 - **`< BACK`:** a link to `/`. It does not rely on browser history, so it also works after a direct load.
 

@@ -63,6 +63,20 @@ apps/web   React 19 + TypeScript + Rsbuild SPA (Jest + RTL)
 apps/bff   Express 5 + TypeScript on Node 18 (Mocha + Chai)
 ```
 
+## Cart
+
+Cart state lives in the web app (`apps/web/src/shared/cart`), is persisted in
+`localStorage` under the key `mbst:cart:v1`, and syncs across tabs. Known
+limitations:
+
+- **Prices are snapshots.** A line stores the price at the time it was added and
+  is never revalidated against the API, so a stored total can go stale if the
+  upstream price changes.
+- **No quantity control.** Every add creates its own line (`lineId`); the
+  header count is the number of lines.
+- Stored cart data is validated on read; invalid entries are dropped and the
+  app keeps working in memory if storage is unavailable.
+
 ## Node 18 trade-off
 
 The challenge mandates Node 18, which is end-of-life. Every pinned tool version

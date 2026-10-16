@@ -122,13 +122,13 @@ Still unresolved:
 - **Result counter and the 20-item limit.** With 23 unique products, always requesting `limit=20` shows 20 results without a search, and searches return fewer (for example 6 for `samsung`). Proposed: keep it. Confirm.
 - **Meaning of "From {price}" in the detail.** Proposed: `basePrice`, so the price matches the card the user just clicked. Alternative: the cheapest storage price, which is more truthful for the 5 products where the two differ but would not match the card.
 - **Products with a single option.** 5 products have nothing to choose. Proposed: do **not** auto-select, so the add button follows the Figma and the statement literally (it enables only after the user selects). Alternative: auto-select when there is exactly one option. Document the choice in the README either way.
-- **Price format.** Decimals exist (`959.42`). Proposed: show decimals only when present, with a comma as separator (`959,42 EUR`, `1099 EUR`), and compute cart totals in integer cents to avoid floating point errors.
+- **Price format.** Decimals exist (`959.42`). Proposed: show decimals only when present, with a comma as separator (`959,42 EUR`, `1099 EUR`). Cart totals in integer cents are decided (`add-cart-state`: sum of `Math.round(price * 100)` per line); only the display format is still pending.
 
 Resolved (details in `docs/design-notes.md`):
 
 - Initial image in the detail view is the first `colorOptions[].imageUrl`.
 - Price shows `From {price}` until a storage option is chosen, then that option's full price. Prices are absolute (verified).
-- The cart has no quantity control. Cart line behavior is proposed in `docs/design-notes.md` and still needs confirmation.
+- The cart has no quantity control. Cart line behavior is decided (`add-cart-state`): every add creates its own line with a unique `lineId`, the header count is the number of lines, and the cart persists in `localStorage` under `mbst:cart:v1` with validation on read.
 - The duplicated id is an identical record, so deduplicating in the BFF is safe.
 
 ## BFF contract (implemented)
