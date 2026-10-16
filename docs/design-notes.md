@@ -47,7 +47,7 @@ Figma names its color styles `SDS/...`. Mirror that in CSS variable names. Put t
 | `--color-bg-disabled` (`SDS/Background/States/Disabled`) | `#F3F2F2` | Disabled add button background |
 | `--color-danger` | `#DF0000` | `Eliminar` |
 
-Not yet captured **[CONFIRM]**: page background (assumed `#FFFFFF`), table border color, enabled primary button color (`PAY`, enabled add), selected-state borders, hover fill (assumed `#000000`). Card border color `#000000`, search underline `#000000` confirmed.
+Confirmed (add-product-detail): enabled primary button (`PAY`, enabled add) `#000000` (`--color-bg-primary`); selected-state borders — storage option selected `1px #000000` (`--color-border-selected`), unselected `1px #CCCCCC` (`--color-border-control`), color swatch selected outline `1px #000000`. Still **[CONFIRM]**: page background (assumed `#FFFFFF`), table border color (using `--color-border-control`), hover fill (assumed `#000000`). Card border `#000000`, search underline `#000000` confirmed.
 
 **Typography** (all Helvetica Neue Light 300, line height 100%, letter spacing 0% unless stated)
 
@@ -63,13 +63,13 @@ Not yet captured **[CONFIRM]**: page background (assumed `#FFFFFF`), table borde
 | Add button label | 12px | uppercase | line height 16px, **letter spacing 8%**, centered |
 | `Eliminar` | 12px | as typed | `--color-danger` |
 
-Not yet captured **[CONFIRM]**: results counter, specs table (label and value), section titles, cart title and footer.
+Confirmed (add-product-detail): section titles 20px uppercase; specifications labels 12px uppercase and values 12px; storage/color legends 14px uppercase; selected color name 12px capitalized; back link 12px uppercase. The results counter is captured in the catalog section below. Still **[CONFIRM]**: cart title and footer text.
 
 **Sizes and layout**
 
 - Desktop frame 1920px, header height 80px, horizontal padding 100px.
 - Catalog grid: 5 columns over 1720px, so **cards are 344px wide and roughly square (≈)**. Search input is full grid width.
-- Detail: info column **380px** wide, add button **380 × 56px** (padding 5/7/5/7). The specs table and the page content sit in a centered container of **≈1200px** (≈360px side margins). The image sits on the left of that container.
+- Detail (confirmed in add-product-detail): the content sits in a centered container of **1200px**, with the image area **510px** on the left and the info column **380px** on the right, leaving **310px** between them (`justify-content: space-between`). Tablet keeps the info column at **380px**; mobile stacks both full width. Add button **380 × 56px** (fills the info column). Specifications label column **300px** on desktop and tablet, fluid on mobile, rows **≈46px** (mobile width and exact row height still **[CONFIRM]**).
 - Color swatch: **24 × 24px**, 1px `#CCCCCC` border. Gap between swatches **[CONFIRM]**: the component says 10px, the visible spacing looks larger (≈16px).
 - Cart: buttons are **≈260 × 56px**, `CONTINUE SHOPPING` at the left padding edge, `PAY` at the right padding edge.
 - Breakpoints (proposed, mobile-first, the design only shows three widths): mobile base up to 599px (1 column, padding ≈16px), tablet from 600px (2 columns, padding ≈40px), desktop from 1024px (5 columns, padding 100px). Between designed widths the layout stays fluid. At 1024px desktop cards are about 165px wide, so the card info row must wrap (name above price) instead of overflowing. **[CONFIRM]**
@@ -101,15 +101,16 @@ The same card (and hover) is reused in "Similar items".
 
 ## Product detail
 
-- Below the header, a `< BACK` link (small, uppercase).
+- Below the header, a `< BACK` link: 12px, uppercase, glyph `aria-hidden` and accessible name `BACK`. Visible in every state (loading, not found, error, success).
 - Desktop and tablet: large image on the left, info column on the right. Mobile: image on top, info below, full width.
 - Info column, in order: name, price, storage selector, color selector, add button.
-- **Storage selector:** segmented buttons with a 1px border, equal width on mobile. Selected one has a darker border. Exactly one selectable.
-- **Color selector:** square swatches from `hexCode`. The Figma `Color` component has a `Selected` property: selected swatch gets an outline. After selecting, the **color name is shown under the swatches**. Exactly one selectable.
-- **Add button:** full width of the info column, 56px high. Disabled: `#F3F2F2` background, `#C2BFBC` label. Enabled (both options chosen): near-black with white label.
+- **Storage selector (confirmed):** segmented buttons, unselected `1px #CCCCCC`, selected `1px #000000`, equal width on mobile, option label 14px. Exactly one selectable, nothing pre-selected. The radio's accessible name is `{capacity}, {price}` (for example `128 GB, 959,42 EUR`), and its value is the raw capacity string.
+- **Color selector (confirmed):** square **24 × 24px** swatches from `hexCode`, `1px #CCCCCC` border; the selected swatch gets a `1px #000000` outline. After selecting, the **color name is shown under the swatches** (12px, capitalized). Exactly one selectable, nothing pre-selected. An invalid `hexCode` falls back to the neutral `#CCCCCC`.
+- **Add button:** full width of the info column, 56px high. Disabled: `#F3F2F2` background, `#C2BFBC` label. Enabled (both options chosen, confirmed): `#000000` background with white label.
 - **Specifications:** two-column table, uppercase labels on the left and values on the right, one horizontal rule per row. Order: BRAND, NAME, DESCRIPTION, SCREEN, RESOLUTION, PROCESSOR, MAIN CAMERA, SELFIE CAMERA, BATTERY, OS, SCREEN REFRESH RATE. Use a real `<table>` with row headers. `rating` is not shown anywhere.
 - **Similar items:** section title, then a row of the same 344px cards, scrolling **horizontally**. The row starts aligned with the content container and **bleeds off the right edge** of the viewport. Under it, a thin scrollbar line spans the container width with a dark thumb. Style the native scrollbar (`scrollbar-color`, `scrollbar-width`) rather than building a custom one. The scroll area must be keyboard reachable (cards are focusable links).
-- The detail frame contains a **`Loading bar`** layer, so a loading state exists in the design but has not been captured yet **[CONFIRM]**.
+- The detail frame contains a **`Loading bar`** layer; its appearance is still **[CONFIRM]**. The implemented loading state uses the text `LOADING...` (12px, uppercase) in a `role="status"`, consistent with the catalog.
+- **Desktop vertical rhythm (confirmed, human-provided):** content starts ≈240px below the header; back link → title 14px; title → price 12px; price → storage label 65px; storage label → options 30px; options → color label 45px; color label → swatches 25px; swatches → add button 65px; product → `SPECIFICATIONS` title 240px; title → table 45px. The mobile and tablet rhythm stays fluid **[CONFIRM]**.
 
 ## Cart
 
@@ -166,6 +167,6 @@ Request error with retry, no-results state, product not found (404), and a faile
 ## Still to extract from Figma
 
 - Confirm the tablet and mobile paddings (≈ values above), their card sizes, and the proposed breakpoints.
-- Dev Mode values for: results counter, specs table text, section titles, cart title and footer text, card and table border color, enabled primary button color, selected storage border, selected swatch outline.
+- Dev Mode values for: cart title and footer text, card and table border color.
 - The `Loading bar` appearance.
 - The back chevron and the clear (×) are text glyphs in the Figma, not icons. Read the exact character in each text layer's Content field (for example `‹` or `<`, `×` or `x`). The `Search` component also contains an icon layer, check what it is. Export is in the Properties panel (Export section), Dev Mode is not needed.

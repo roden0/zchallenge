@@ -6,6 +6,8 @@
   --color-border-control: #cccccc;
   --color-content-disabled: #c2bfbc;
   --color-bg-disabled: #f3f2f2;
+  --color-bg-primary: #000000;
+  --color-border-selected: #000000;
   --color-danger: #df0000;
 
   /* Typography scale */
