@@ -6,6 +6,7 @@ import { strings } from '../../shared/strings';
 import { formatPrice } from '../../shared/utils/format-price';
 import { AddToCartButton } from './components/AddToCartButton';
 import { ColorSelector } from './components/ColorSelector';
+import { SimilarProducts } from './components/SimilarProducts';
 import { SpecsTable } from './components/SpecsTable';
 import { StorageSelector } from './components/StorageSelector';
 import { useProduct } from './hooks/useProduct';
@@ -69,6 +70,7 @@ function ProductContent({ product }: { product: ProductDetail }) {
         <h2 className={styles.specsTitle}>{strings.detailSpecsHeading}</h2>
         <SpecsTable product={product} />
       </section>
+      <SimilarProducts products={product.similarProducts} />
     </>
   );
 }

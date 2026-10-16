@@ -20,6 +20,7 @@ export const strings = {
   detailAddHint: 'Select a storage and a color to add this phone to the cart.',
   detailAddedToCart: (name: string) => `${name} added to cart.`,
   detailSpecsHeading: 'SPECIFICATIONS',
+  detailSimilarHeading: 'SIMILAR ITEMS',
   detailMissingValue: '-',
   cartViewTitle: 'Cart',
   notFoundTitle: 'Page not found',
