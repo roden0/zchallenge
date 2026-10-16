@@ -1,12 +1,7 @@
-import { usePageTitle } from '../../shared/hooks/usePageTitle';
-import { strings } from '../../shared/strings';
+import { useParams } from 'react-router-dom';
+import { ProductView } from './ProductView';
 
 export function ProductDetailPage() {
-  usePageTitle(`${strings.detailTitleGeneric} | MBST`);
-  return (
-    <div>
-      <h1>Product</h1>
-      <p>Product detail</p>
-    </div>
-  );
+  const { id } = useParams();
+  return <ProductView key={id} id={id ?? ''} />;
 }

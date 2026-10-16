@@ -4,8 +4,9 @@ Mobile phone catalog web app (technical challenge). A pnpm + Turborepo
 monorepo with a React SPA that talks only to an Express BFF; the BFF is the only
 service that calls the upstream phones API.
 
-This repository currently contains the runnable tooling foundation only. No
-product features are implemented yet.
+This repository contains the tooling foundation plus three product views:
+the catalog list (`/`), the product detail (`/products/:id`) and the cart
+(`/cart`).
 
 ## Prerequisites
 
@@ -62,6 +63,27 @@ UPSTREAM_API_KEY=
 apps/web   React 19 + TypeScript + Rsbuild SPA (Jest + RTL)
 apps/bff   Express 5 + TypeScript on Node 18 (Mocha + Chai)
 ```
+
+## Product detail
+
+The `/products/:id` view (feature `apps/web/src/features/product-detail`) fetches
+`GET /api/products/{id}` through the BFF and renders four states:
+
+- **Loading** — `LOADING...` in a `role="status"`, document title `Product | MBST`.
+- **Loaded** — title `{name} | MBST`, image, storage and color selector groups,
+  the shared price and the add-to-cart button, plus a `SPECIFICATIONS` table.
+- **Not found** (BFF `404`/`400`) — `PRODUCT NOT FOUND`, title `Product not found | MBST`.
+- **Error** — `COULD NOT LOAD PRODUCT` in a `role="alert"` with a `RETRY`
+  button; the raw upstream message or status is never shown.
+
+Storage and color are native radio groups with nothing pre-selected, so the add
+button stays disabled until both are chosen. The displayed price comes from the
+selected storage option (`From {basePrice} EUR` before choosing) and the image
+follows the selected color. Adding appends a cart line through the shared cart,
+so repeated adds create separate lines.
+
+Known **[CONFIRM]** values: the specifications label column is `300px` on desktop
+and tablet and fluid on mobile, and the row height is ≈`46px`.
 
 ## Cart
 
