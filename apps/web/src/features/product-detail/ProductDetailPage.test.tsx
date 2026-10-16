@@ -563,3 +563,127 @@ describe('detail add to cart', () => {
     ).toBeInTheDocument();
   });
 });
+
+describe('detail similar items', () => {
+  const similarApple = {
+    id: 'APL-IP13-128',
+    brand: 'Apple',
+    name: 'iPhone 13',
+    basePrice: 1099,
+    imageUrl: 'https://example.com/i13.jpg',
+  };
+
+  async function loadWithSimilar() {
+    await loadProduct(makeProduct({ similarProducts: [similarApple] }));
+  }
+
+  function similarCard() {
+    return screen.getByRole('link', {
+      name: 'Apple iPhone 13, 1099,00 EUR',
+    });
+  }
+
+  async function openSimilar() {
+    const user = userEvent.setup();
+    await user.click(similarCard());
+    respond(
+      1,
+      jsonResponse(
+        makeProduct({
+          id: 'APL-IP13-128',
+          name: 'iPhone 13',
+          basePrice: 999,
+          storageOptions: [{ capacity: '128 GB', price: 999 }],
+          colorOptions: [
+            {
+              name: 'Black',
+              hexCode: '#000000',
+              imageUrl: 'https://e.com/b.jpg',
+            },
+          ],
+        }),
+      ),
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByRole('heading', { level: 1, name: 'iPhone 13' }),
+      ).toBeInTheDocument(),
+    );
+  }
+
+  it('fetches the new id, aborts the previous request and resets the selections', async () => {
+    const user = userEvent.setup();
+    await loadWithSimilar();
+    await user.click(screen.getByRole('radio', { name: /256 GB/ }));
+    await user.click(screen.getByRole('radio', { name: 'Titanium Blue' }));
+    expect(screen.getByText('1329,00 EUR')).toBeInTheDocument();
+
+    const card = similarCard();
+    expect(card).toHaveAttribute('href', '/products/APL-IP13-128');
+    await user.click(card);
+
+    expect(requests).toHaveLength(2);
+    expect(requestAt(1).url).toBe('/api/products/APL-IP13-128');
+    expect(requestAt(0).signal?.aborted).toBe(true);
+
+    respond(
+      1,
+      jsonResponse(
+        makeProduct({
+          id: 'APL-IP13-128',
+          name: 'iPhone 13',
+          basePrice: 999,
+          storageOptions: [{ capacity: '128 GB', price: 999 }],
+          colorOptions: [
+            {
+              name: 'Black',
+              hexCode: '#000000',
+              imageUrl: 'https://e.com/b.jpg',
+            },
+          ],
+        }),
+      ),
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole('heading', { level: 1, name: 'iPhone 13' }),
+      ).toBeInTheDocument(),
+    );
+    expect(document.title).toBe('iPhone 13 | MBST');
+    expect(screen.getByText('From 999,00 EUR')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'AÑADIR' })).toBeDisabled();
+    expect(
+      screen.queryByRole('radio', { name: 'Titanium Blue' }),
+    ).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(screen.getByRole('main'));
+  });
+
+  it('returns to the previous product with Back', async () => {
+    await loadWithSimilar();
+    await openSimilar();
+
+    act(() => {
+      navigate(-1);
+    });
+    expect(requestAt(2).url).toBe('/api/products/SMG-S24U');
+
+    respond(2, jsonResponse(makeProduct()));
+    await waitFor(() =>
+      expect(
+        screen.getByRole('heading', { level: 1, name: 'Galaxy S24 Ultra' }),
+      ).toBeInTheDocument(),
+    );
+    expect(screen.getByText('From 1329,00 EUR')).toBeInTheDocument();
+  });
+
+  it('renders no card for the product currently shown', async () => {
+    await loadWithSimilar();
+    const row = screen.getByRole('list');
+    const hrefs = within(row)
+      .getAllByRole('link')
+      .map((link) => link.getAttribute('href'));
+    expect(hrefs).toEqual(['/products/APL-IP13-128']);
+    expect(hrefs).not.toContain('/products/SMG-S24U');
+  });
+});
